@@ -26,23 +26,23 @@ module ActsAsParanoid
     column_reference = "#{self.table_name}.#{configuration[:column]}"
 
     class_eval <<-EOV
-      default_scope where("#{column_reference} IS ?", nil)
+      #default_scope where("#{column_reference} IS ?", nil)
 
       class << self
         def is_paranoid?
           true
         end
 
-        def with_deleted
-          self.unscoped.where("") #self.unscoped.reload
+        def not_deleted
+          self.where("#{column_reference} IS ?", nil)
         end
 
         def only_deleted
-          self.unscoped.where("#{column_reference} IS NOT ?", nil)
+          self.where("#{column_reference} IS NOT ?", nil)
         end
 
         def delete_all!(conditions = nil)
-          self.unscoped.delete_all!(conditions)
+          self.delete_all!(conditions)
         end
 
         def delete_all(conditions = nil)
